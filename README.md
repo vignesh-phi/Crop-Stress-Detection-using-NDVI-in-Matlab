@@ -8,6 +8,7 @@ Whether you are analyzing a healthy farm, an arid desert, or a coastal region, t
 ## 🚀 Key Features
 * **Interactive 5-Zone Analysis:** Drag a single threshold slider to dynamically update health zones in real-time.
 * **Automatic Scene Detection:** The system intelligently identifies the environment (Agricultural Field, Ocean, Road/Urban, Desert) based on raw NDVI statistics.
+* **Multiple Classification Methods:** Analyze using manual Thresholding, Otsu's Method, or K-Means clustering.
 * **Stress Hotspot Finder:** Automatically isolates, measures, and ranks isolated patches of severely stressed vegetation.
 * **Comprehensive Analytics:** Compare 6 different vegetation indices, apply 5 different image filters, and view detailed Histograms and Cumulative Distribution Functions (CDF).
 * **One-Click Export:** Instantly generate a CSV data report and PNG visuals of your analysis.
@@ -15,7 +16,7 @@ Whether you are analyzing a healthy farm, an arid desert, or a coastal region, t
 ---
 
 ## 📥 Input Data Specifications
-This application is strictly optimized for high-resolution satellite imagery, specifically Sentinel-2 data provided by the European Space Agency's **Copernicus** program. 
+This application is optimized for high-resolution satellite imagery, specifically Sentinel-2 data provided by the European Space Agency's **Copernicus** program. 
 
 For the main NDVI engine to function, you must provide:
 * **Format:** 16-bit `.tiff` images (Raw L1C / L2A data).
@@ -33,8 +34,25 @@ The main interface allows users to load raw satellite bands and immediately view
 
 ### Sample Environments
 The tool accurately handles non-agricultural environments, automatically classifying massive water bodies or dense urban areas.
-* **Ocean / Water Body:** ![Sample Ocean](<Sample Ocean Image.png>)
 * **Healthy Field:** ![Sample Green Field](<Sample Green Field Image.png>)
+* **Ocean / Water Body:** ![Sample Ocean](<Sample Ocean Image.png>)
+
+---
+
+## 🔬 Classification Methods
+The tool allows you to map crop health using three different algorithms depending on your diagnostic needs.
+
+### 1. K-Means Clustering
+Automatically clusters the field into natural statistical groupings without relying on strict manual thresholds.
+![K-Means Method](<K-means Method.png>)
+
+### 2. Otsu's Method
+Utilizes automated image thresholding to optimally separate vegetation from background soil and water.
+![Otsu Method](<Otsu Method.png>)
+
+### 3. Methods Comparison & Confusion Matrices
+Directly evaluate the precision, recall, and F1-score of K-Means and Otsu's method against a baseline manual threshold.
+![Methods Comparison](<Methods Comparision.png>)
 
 ---
 
@@ -48,13 +66,17 @@ Isolates connected patches of stressed crops, allowing users to pinpoint exact f
 Compare the standard NDVI against EVI, SAVI, MSAVI, GNDVI, and RE-NDVI to ensure the most accurate environmental assessment.
 ![Indices Comparison](<Vegetation Indices Comparision.png>)
 
+### Filter Processing Analysis
+Compare the raw continuous NDVI map against applied statistical filters (Gaussian, Median, Wiener, and Bilateral-like) alongside their respective histograms.
+![Raw and Filtered NDVI](<Raw and Filtered NDVI map and histogram.png>)
+
 ### Statistical Distribution
 Detailed histogram and CDF plotting colored dynamically by the active health zones.
 ![Histogram and CDF](<Histogram and CDF.png>)
 
-### Method Comparison (K-Means & Otsu)
-Evaluate thresholding techniques against automated K-Means clustering and Otsu's method.
-![Methods Comparison](<Methods Comparision.png>)
+### Exported Reporting
+Instantly generate detailed CSV reports documenting per-zone pixel coverage, area percentages, and mean NDVI scores.
+![CSV Report](<CSV Report .png>)
 
 ---
 
@@ -77,7 +99,7 @@ Click one of the 4 sample-data buttons to test the engine:
 
 ---
 
-## 🔬 Technical Specifications
+## 🛠️ Technical Specifications
 
 ### Proportional Zoning Logic
 Classification thresholds scale proportionally with the main Threshold value (`T`). Because the Stressed upper bound is bound to `T/2`, the stressed zone remains dynamically visible at every slider position.
@@ -90,11 +112,6 @@ Classification thresholds scale proportionally with the main Threshold value (`T
 ### Scene Logic & Colormaps
 * **Auto-Detection:** Ocean images process almost entirely as `NDVI < 0` (Class 1), while Roads map to `NDVI ~0-0.10` (Class 2), and Deserts map to `NDVI ~0.05-0.20` (Classes 2-3).
 * **Colorimetry:** Utilizes a custom 6-class colormap (Water | Stressed | Moderate | Healthy | Very Healthy) alongside a diverging continuous NDVI colormap (Blue = negative, White = 0, Green = high).
-
-### Filtering & Processing Parameters
-* **Supported Filters:** None, Gaussian, Median, Wiener, Bilateral-like.
-* **Supported Indices:** NDVI, EVI, SAVI, MSAVI, GNDVI, RE-NDVI. *(Note: Optional Green band input enables proper EVI and GNDVI calculations).*
-* **Hotspot Detection:** Utilizes `bwlabel` mapping alongside a scatter severity plot based on patch area and mean NDVI.
 
 ### Required MATLAB Toolboxes
 * **Image Processing Toolbox** (Core requirement)
